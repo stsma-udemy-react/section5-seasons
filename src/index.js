@@ -2,28 +2,32 @@ import { render } from '@testing-library/react';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-//const App = () =>{
-//    window.navigator.geolocation.getCurrentPosition( 
-//        (position) => console.log(position),
-//        (err) => console.log(err)
-//    )
-
-//    return(
-//        <div>
-//            Hi there!
-//        </div>
-//    )
-//}
-
 class App extends React.Component{
-    render(){
-        window.navigator.geolocation.getCurrentPosition(
-            (position) => console.log(position),
-            (error) => console.log(error)
-        );
+    constructor(props){
+        super(props);
 
+        this.state={
+            lat: null,
+            errorMessage: ''
+        }
+
+        window.navigator.geolocation.getCurrentPosition(
+            (position) => {
+                this.setState({lat: position.coords.latitude})
+            },
+            (error) => {
+                console.log(error);
+                this.setState({errorMessage: error.message});
+            }
+        );
+    }
+
+    render(){
         return(
-            <div>Hi there!</div>
+            <div>{this.state.errorMessage && !this.state.lat ? 
+                'Error ' + this.state.errorMessage : 
+                !this.state.errorMessage && this.state.lat ?
+                    'Latitude: ' + this.state.lat : 'loading...'}</div>
         )
     }
 }
